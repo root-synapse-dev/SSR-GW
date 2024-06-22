@@ -1,0 +1,6 @@
+.eslintignore
+.prettierignore
+.env
+build
+dist
+node_modules
