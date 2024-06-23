@@ -52,7 +52,7 @@ export default [
       },
 
       parser: tsParser,
-      ecmaVersion: 2021,
+      ecmaVersion: es5,
       sourceType: 'module',
 
       parserOptions: {
