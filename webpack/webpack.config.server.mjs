@@ -44,7 +44,7 @@ export default {
           'thread-loader',
           {
             loader: 'esbuild-loader',
-            options: { target: 'es2022' },
+            options: { target: 'es5' },
           },
         ],
         exclude: /node_modules/,
