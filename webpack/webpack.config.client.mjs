@@ -41,7 +41,7 @@ export default {
           'thread-loader',
           {
             loader: 'esbuild-loader',
-            options: { target: 'es2022' },
+            options: { target: 'es5' },
           },
         ],
         exclude: /node_modules/,
@@ -168,7 +168,7 @@ export default {
   optimization: {
     minimizer: [
       new EsbuildPlugin({
-        target: 'esnext',
+        target: 'es5',
         css: true,
       }),
       new CssMinimizerPlugin(),
