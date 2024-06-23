@@ -30,9 +30,9 @@ const Home = () => {
               Hola 👋🏾 soy Juan Carlos, Freelancer 💻 y Repartidor 🛵💨😌😊
             </p>
             <h2 className="uppercase tracking-widest text-xs text-center text-blue-100 max-w-[80]">
-              SSR-GW: Es un proyecto en el que estoy desarrollando 🛠️ una
+              📣 Les presento el proyecto SSR-GW 🌐 un proyecto en el que estoy desarrollando 🛠️ una
               aplicación web responsiva 🚀 renderizada en el lado del servidor
-              (SSR) 🌐 Para ello utilizo un stack de las últimas tecnologías y
+              (SSR) 📡 Para ello utilizo un stack de las últimas tecnologías y
               frameworks 📚 disponibles de la industria, dentro de las que
               podemos destacar TypeScript 📘 Esbuild 🏗️ Babel 🔄 webpack 📦
               React ⚛️ Express 🚆 ESLint 🔍 Prettier 🎨 soporte para Tailwind
