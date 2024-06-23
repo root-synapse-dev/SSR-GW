@@ -5,6 +5,10 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { EsbuildPlugin } from 'esbuild-loader';
 import CompressionPlugin from 'compression-webpack-plugin';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import ImageMinimizerPlugin from 'image-minimizer-webpack-plugin';
+import imagemin from 'imagemin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,7 +41,7 @@ export default {
           'thread-loader',
           {
             loader: 'esbuild-loader',
-            options: { target: 'esnext' },
+            options: { target: 'es2022' },
           },
         ],
         exclude: /node_modules/,
@@ -136,8 +140,22 @@ export default {
       filename: '[name].css',
       chunkFilename: '[id].css',
     }),
+    new ImageMinimizerPlugin({
+      // Minimiza imágenes
+      minimizer: {
+        implementation: ImageMinimizerPlugin.imageminMinify,
+        options: {
+          plugins: [
+            // Plugins de optimización de imágenes
+            ['mozjpeg', { quality: 75 }],
+            ['optipng', { optimizationLevel: 5 }],
+          ],
+        },
+      },
+    }),
     new CompressionPlugin({
       algorithm: 'gzip',
+      filename: '[path][base].gz',
       test: /.*/,
       threshold: 10240,
       minRatio: 0.8,
@@ -153,6 +171,8 @@ export default {
         target: 'esnext',
         css: true,
       }),
+      new CssMinimizerPlugin(),
+      new TerserPlugin(),
     ],
     splitChunks: {
       chunks: 'all',

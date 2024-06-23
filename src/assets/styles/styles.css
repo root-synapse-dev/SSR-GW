@@ -1,7 +1,9 @@
+/* styles.css */
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+// Custom styles
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -89,6 +91,7 @@
   body {
     @apply bg-background text-foreground;
   }
+
   button {
     @apply active:outline-none;
   }

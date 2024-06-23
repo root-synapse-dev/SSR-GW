@@ -1,5 +1,6 @@
-import Home from '../pages/Home';
+import '../assets/styles/styles.scss';
 import '../assets/styles/styles.css';
+import Home from '../pages/Home';
 
 const App = () => {
   return (

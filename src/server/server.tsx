@@ -3,6 +3,8 @@ import os from 'os';
 import express from 'express';
 import { createServer } from 'http';
 import { renderToString } from 'react-dom/server';
+import compression from 'compression';
+import helmet from 'helmet';
 import App from '../components/App';
 
 const numCPUs = os.cpus().length;
@@ -21,6 +23,16 @@ if (cluster.isPrimary) {
 } else {
   const app = express();
   const server = createServer(app);
+
+  app.use(helmet());
+  
+  // Use Brotli compression
+  app.use(
+    compression({
+      brotli: { enabled: true, zlib: {} },
+      threshold: 0,
+    })
+  );
 
   app.use(express.static('build/client'));
 
