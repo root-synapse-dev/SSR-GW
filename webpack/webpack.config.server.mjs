@@ -101,7 +101,7 @@ export default {
   optimization: {
     minimizer: [
       new EsbuildPlugin({
-        target: 'esnext',
+        target: 'es5',
         css: true,
       }),
       new CssMinimizerPlugin(),
