@@ -5,7 +5,7 @@ import MagicButton from '../components/ui/MagicButton';
 const Home = () => {
   return (
     <main>
-      {/* Spotlight */}
+      {/* Iluminación Estética Sagrada */}
       <div className="pb-20 pt-36">
         <Spotlight
           className="-top-40 -left-10 md:-left-32 md:-top-20 h-screen"
@@ -19,39 +19,43 @@ const Home = () => {
       </div>
 
       <div>
-        {/* Grid */}
+        {/* Grid de Fondo - Interfaz de Grado Industrial */}
         <div className="absolute h-screen w-full dark:bg-black-100 bg-white dark:bg-grid-white/[0.1] bg-grid-black-100/[0.2] top-0 left-0 flex items-center justify-center">
           <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black-100 bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
         </div>
-        {/* Proyecto */}
+
+        {/* Contenido Central: Spiritus Vivens 🌿 */}
         <div className="flex justify-center relative mt-0 z-10">
-          <div className="max-w-[80vw] md:max-w-screen-2xl lg:max-w-[80vw] flex flex-col items-center justify-center">
-            <p className="text-center text-blue-100 md:tracking-wider mb-10 text-base md:text-lg lg:text-2xl">
-              Hola 👋🏾 soy Juan Carlos, Freelancer 💻 y Repartidor 🛵💨😌😊
-            </p>
-            <h2 className="uppercase tracking-widest text-xs text-center text-blue-100 max-w-[80]">
-              📣 Les presento el proyecto SSR-GW 🌐 un proyecto en el que estoy
-              desarrollando 🛠️ una aplicación web (SSR) responsiva 🚀
-              renderizada en el lado del servidor 🔗 Para ello utilizo un stack
-              de las últimas tecnologías y frameworks 📚 disponibles de la
-              industria, dentro de las que podemos destacar TypeScript 📘
-              Esbuild 🏗️ Babel 🔄 webpack 📦 React ⚛️ Express 🚆 ESLint 🔍
-              Prettier 🎨 soporte para Tailwind CSS 🎨 SASS 👚 workers 👷‍♂️
-              etcétera. Este proyecto crea aplicaciones web (SSR) robustas 💪
-              eficientes ⏱️ y escalables 📈 siguiendo los standares de la
-              industria 🏭 buenas prácticas y buenas costumbres 👨‍💼 El proyecto
-              está estructurado modularmente 🧩 asegurarando su mantenimiento y
-              escalabilidad, cada componente está optimizado para un rendimiento
-              máximo 🏎️💨 Se han implementado herramientas de desarrollo como
-              ESLint y Prettier para mantener un código limpio y consistente
-              ✨📝.
+          <div className="max-w-[80vw] md:max-w-screen-2xl lg:max-w-[60vw] flex flex-col items-center justify-center">
+            
+            <h2 className="uppercase tracking-widest text-xs text-center text-blue-100 max-w-80">
+              Alegoría DEI - Spiritus Vivens 🌿 v9.0.0
             </h2>
+
             <TextGenerateEffect
-              className="text-center text-[20px] md:text-5xl lg:text-6xl"
-              words="Renaciendo de las cenizas 🐣🙏🏾"
+              className="text-center text-[40px] md:text-5xl lg:text-6xl"
+              words="La Intersección entre el Dogma y la Tecnología"
             />
-            <a href="/">
-              <MagicButton />
+
+            <p className="text-center md:tracking-wider mb-4 text-sm md:text-lg lg:text-2xl text-white-100">
+              Un motor determinista de 35 doctrinas y 70 colores, 
+              renderizado en servidor (SSR) para la gloria de la Palabra.
+            </p>
+
+            <div className="mt-8 flex flex-col items-center gap-4">
+              <h3 className="text-blue-100 font-semibold">Infraestructura SSR-GW Activa ✅</h3>
+              <p className="text-xs text-center text-gray-400 max-w-md">
+                Optimizada con TypeScript, Esbuild y Webpack. 
+                Lista para escalamiento global y despliegue en la nube.
+              </p>
+            </div>
+
+            <a href="#proyectos" className="mt-10">
+              <MagicButton 
+                title="Explorar Doctrinas v9.0" 
+                icon={<span>🌿</span>} 
+                position="right"
+              />
             </a>
           </div>
         </div>
