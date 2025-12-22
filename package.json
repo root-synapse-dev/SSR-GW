@@ -1,5 +1,5 @@
 {
-  "private": false,
+  "private": true,
   "scripts": {
     "build-client": "cross-env NODE_ENV=production webpack --config webpack/webpack.config.client.mjs",
     "build-server": "cross-env NODE_ENV=production webpack --config webpack/webpack.config.server.mjs",
