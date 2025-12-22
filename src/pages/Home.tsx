@@ -32,7 +32,7 @@ const Home = () => {
 
           {/* Firma / Identificación */}
           <h2 className="uppercase tracking-widest text-xs text-blue-100 max-w-80">
-            Alegoría DEI — Spiritus Vivens 🌿 v9.0.0
+            Alegoría DEI — Spiritus Vivens 🌿 v9.9.9
           </h2>
 
           {/* Umbral conceptual — NO SE TOCA */}
