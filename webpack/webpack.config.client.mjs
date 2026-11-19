@@ -68,14 +68,6 @@ export default {
           'css-loader',
           {
             loader: 'postcss-loader',
-            options: {
-              postcssOptions: {
-                plugins: [
-                  tailwindcss(),
-                  autoprefixer(),
-                ],
-              },
-            },
           },
         ],
         exclude: /node_modules/,

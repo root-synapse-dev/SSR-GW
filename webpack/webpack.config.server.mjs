@@ -1,8 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import nodeExternals from 'webpack-node-externals';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import CompressionPlugin from 'compression-webpack-plugin';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 
@@ -56,7 +54,6 @@ export default {
       {
         test: /\.(css|scss)$/i,
         use: [
-          MiniCssExtractPlugin.loader,
           'css-loader',
           'postcss-loader',
           'sass-loader',
@@ -67,18 +64,6 @@ export default {
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css',
-    }),
-    new CompressionPlugin({
-      algorithm: 'gzip',
-      filename: '[path][base].gz',
-      test: /.*/,
-      threshold: 10240,
-      minRatio: 0.8,
-      exclude: /node_modules/,
-    }),
   ],
   cache: {
     type: 'filesystem',
