@@ -2,31 +2,25 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import nodeExternals from 'webpack-node-externals';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import { EsbuildPlugin } from 'esbuild-loader';
 import CompressionPlugin from 'compression-webpack-plugin';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import ImageMinimizerPlugin from 'image-minimizer-webpack-plugin';
-import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let mode = 'development';
-if (process.env.NODE_ENV === 'production') {
-  mode = 'production';
-}
+const isProduction = process.env.NODE_ENV === 'production';
 
 export default {
   entry: './src/server/server.tsx',
-  mode: mode,
+  mode: isProduction ? 'production' : 'development',
   target: 'node',
   externals: [
     nodeExternals({
       allowlist: [/\.css$/],
     }),
   ],
-  devtool: mode === 'production' ? 'source-map' : 'eval-source-map',
+  devtool: isProduction ? 'source-map' : 'eval-cheap-module-source-map',
   output: {
     filename: 'server-bundle.js',
     path: path.resolve(__dirname, '../build/server'),
@@ -35,6 +29,9 @@ export default {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js'],
+    alias: {
+      '@': path.resolve(__dirname, '../src'),
+    },
   },
   module: {
     rules: [
@@ -44,21 +41,20 @@ export default {
           'thread-loader',
           {
             loader: 'esbuild-loader',
-            options: { target: 'es6' },
+            options: { target: 'es2020' },
           },
         ],
         exclude: /node_modules/,
       },
       {
-        test: /\.(png|jpe?g|gif|svg)$/,
+        test: /\.(png|jpe?g|gif|svg)$/i,
         type: 'asset/resource',
+        generator: {
+          filename: 'assets/[hash][ext][query]',
+        },
       },
       {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-        type: 'asset/resource',
-      },
-      {
-        test: /\.(css|scss)$/,
+        test: /\.(css|scss)$/i,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
@@ -75,17 +71,6 @@ export default {
       filename: '[name].css',
       chunkFilename: '[id].css',
     }),
-    new ImageMinimizerPlugin({
-      minimizer: {
-        implementation: ImageMinimizerPlugin.imageminMinify,
-        options: {
-          plugins: [
-            ['mozjpeg', { quality: 75 }],
-            ['optipng', { optimizationLevel: 5 }],
-          ],
-        },
-      },
-    }),
     new CompressionPlugin({
       algorithm: 'gzip',
       filename: '[path][base].gz',
@@ -100,12 +85,19 @@ export default {
   },
   optimization: {
     minimizer: [
-      new EsbuildPlugin({
-        target: 'es6',
-        css: true,
+      new TerserPlugin({
+        terserOptions: {
+          ecma: 2020,
+          warnings: false,
+          parse: {},
+          keep_classnames: true,
+          keep_fnames: true,
+          output: {
+            comments: false,
+            ascii_only: false,
+          },
+        },
       }),
-      new CssMinimizerPlugin(),
-      new TerserPlugin(),
     ],
     splitChunks: {
       chunks: 'all',

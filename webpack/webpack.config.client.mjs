@@ -1,37 +1,35 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import { EsbuildPlugin } from 'esbuild-loader';
-import CompressionPlugin from 'compression-webpack-plugin';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import ImageMinimizerPlugin from 'image-minimizer-webpack-plugin';
-import imagemin from 'imagemin';
-import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import CompressionPlugin from 'compression-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let mode = 'development';
-if (process.env.NODE_ENV === 'production') {
-  mode = 'production';
-}
+const isProduction = process.env.NODE_ENV === 'production';
 
 export default {
   entry: './src/client/client.tsx',
-  mode: mode,
+  mode: isProduction ? 'production' : 'development',
   target: 'web',
-  devtool: mode === 'production' ? 'source-map' : 'eval-source-map',
+  devtool: isProduction ? 'source-map' : 'eval-cheap-module-source-map',
   output: {
-    filename: '[name].[contenthash].js',
-    chunkFilename: '[name].[contenthash].js',
+    filename: isProduction ? '[name].[contenthash].js' : '[name].js',
+    chunkFilename: isProduction ? '[name].[contenthash].js' : '[name].js',
     path: path.resolve(__dirname, '../build/client'),
     clean: true,
     publicPath: '/',
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js'],
+    alias: {
+      '@': path.resolve(__dirname, '../src'),
+    },
   },
   module: {
     rules: [
@@ -41,21 +39,20 @@ export default {
           'thread-loader',
           {
             loader: 'esbuild-loader',
-            options: { target: 'es6' },
+            options: { target: 'es2020' },
           },
         ],
         exclude: /node_modules/,
       },
       {
-        test: /\.(png|jpe?g|gif|svg)$/,
+        test: /\.(png|jpe?g|gif|svg)$/i,
         type: 'asset/resource',
+        generator: {
+          filename: 'assets/[hash][ext][query]',
+        },
       },
       {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-        type: 'asset/resource',
-      },
-      {
-        test: /\.(css|scss)$/,
+        test: /\.scss$/i,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
@@ -64,7 +61,83 @@ export default {
         ],
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [
+                  tailwindcss(),
+                  autoprefixer(),
+                ],
+              },
+            },
+          },
+        ],
+        exclude: /node_modules/,
+      },
     ],
+  },
+  plugins: [
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      template: 'src/assets/template/index.html',
+      filename: 'index.html',
+      inject: true,
+      minify: isProduction
+        ? {
+            collapseWhitespace: true,
+            removeComments: true,
+            removeRedundantAttributes: true,
+            useShortDoctype: true,
+            removeEmptyAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            keepClosingSlash: true,
+            minifyJS: true,
+            minifyCSS: true,
+            minifyURLs: true,
+          }
+        : false,
+    }),
+    new MiniCssExtractPlugin({
+      filename: isProduction ? '[name].[contenthash].css' : '[name].css',
+      chunkFilename: isProduction ? '[id].[contenthash].css' : '[id].css',
+    }),
+    new CompressionPlugin({
+      algorithm: 'gzip',
+      filename: '[path][base].gz',
+      test: /.*/,
+      threshold: 10240,
+      minRatio: 0.8,
+      exclude: /node_modules/,
+    }),
+  ],
+  cache: {
+    type: 'filesystem',
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          ecma: 2020,
+          warnings: false,
+          parse: {},
+          keep_classnames: true,
+          keep_fnames: true,
+          output: {
+            comments: false,
+            ascii_only: false,
+          },
+        },
+      }),
+    ],
+    splitChunks: {
+      chunks: 'all',
+    },
   },
   devServer: {
     allowedHosts: 'all',
@@ -99,83 +172,25 @@ export default {
     proxy: [
       {
         context: ['/api'],
-        target: 'http://localhost:3000',
+        target: 'http://localhost:8080',
         changeOrigin: true,
       },
     ],
     setupExitSignals: true,
-    setupMiddlewares: (middlewares) => {
-      console.log('Configurando middlewares personalizados...');
-      return middlewares;
-    },
     static: {
       directory: path.join(__dirname, '../build/client'),
       watch: true,
-    },
-    watchFiles: ['src/**/*.*'],
-  },
-  plugins: [
-    new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      template: 'src/assets/template/index.html',
-      filename: 'index.html',
-      inject: 'body',
-      minify:
-        mode === 'production'
-          ? {
-              collapseWhitespace: true,
-              removeComments: true,
-              removeRedundantAttributes: true,
-              useShortDoctype: true,
-              removeEmptyAttributes: true,
-              removeStyleLinkTypeAttributes: true,
-              keepClosingSlash: true,
-              minifyJS: true,
-              minifyCSS: true,
-              minifyURLs: true,
-            }
-          : false,
-    }),
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css',
-    }),
-    new ImageMinimizerPlugin({
-      // Minimiza imágenes
-      minimizer: {
-        implementation: ImageMinimizerPlugin.imageminMinify,
-        options: {
-          plugins: [
-            // Plugins de optimización de imágenes
-            ['mozjpeg', { quality: 75 }],
-            ['optipng', { optimizationLevel: 5 }],
-          ],
+      staticOptions: {
+        setHeaders: (res, filepath) => {
+          if (filepath.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+          }
+          if (filepath.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+          }
         },
       },
-    }),
-    new CompressionPlugin({
-      algorithm: 'gzip',
-      filename: '[path][base].gz',
-      test: /.*/,
-      threshold: 10240,
-      minRatio: 0.8,
-      exclude: /node_modules/,
-    }),
-  ],
-  cache: {
-    type: 'filesystem',
-  },
-  optimization: {
-    minimizer: [
-      new EsbuildPlugin({
-        target: 'es6',
-        css: true,
-      }),
-      new CssMinimizerPlugin(),
-      new TerserPlugin(),
-    ],
-    splitChunks: {
-      chunks: 'all',
     },
+    watchFiles: ['src/**/*.*'],
   },
 };
